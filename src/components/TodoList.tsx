@@ -1,31 +1,35 @@
-//@ts-nocheck
-import  { useState, useEffect, useReducer } from 'react'
+import  { useState, useReducer } from 'react'
 import { Todo } from './types/Todo'
 import TodoItem from './TodoItem'
 import { v4 as uuid } from 'uuid'
 
+// Initial state
+const initialTodos: Todo[] = [];
 
-const initialTodos = []
+
+interface TodosAction {
+  type: string
+  payload: Todo | string
+}
+
 
 //Reducerfunktionen för todos
-function todoReducer(todos, action) {
-  // Uppdateringen ska ske "immutable" - detta kan alltså ske med ... spread, eller map/filter då de returnerar en ny array
+function todoReducer(todos: Todo[], action: TodosAction): Todo[] {
   switch (action.type) {
     case 'ADD_TODO':
-      return [...todos, action.payload]
+      return [...todos.todos, action.payload as Todo] 
     case 'UPDATE_TODO':
-      return todos.map((todo) => {
-          if (todo.id === action.payload) {
-            return { ...todo, completed: !todo.completed };
-          }
-          return todo
-        })
+      return todos.map((todo: Todo) => {
+        if (todo.id === action.payload) {
+          return { ...todo, completed: !todo.completed };
+        }
+        return todo;
+      })
     case 'DELETE_TODO':
-      return  todos.filter((todo: Todo) => todo.id !== action.payload)
+      return todos.filter((todo: Todo) => todo.id !== action.payload) }
     default:
-      throw new Error('Invalid action type')
+      throw new Error('Invalid action type');
   }
-
 }
 
  function TodoList() {
